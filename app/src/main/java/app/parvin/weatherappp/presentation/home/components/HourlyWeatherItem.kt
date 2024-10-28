@@ -13,19 +13,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.parvin.weatherappp.R
+import app.parvin.weatherappp.ui.theme.AliceBlue
+
 
 @Composable
 fun HourlyWeatherItem(
     time: String,
     weatherIcon: Int,
     temperature: String,
-    backgroundColor: Color
+    selected: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -37,7 +40,7 @@ fun HourlyWeatherItem(
                 clip = false
             )
             .background(
-                color = backgroundColor,
+                color = if (selected) AliceBlue else Color.White,
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(10.dp),
@@ -45,7 +48,10 @@ fun HourlyWeatherItem(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = time, fontSize = 14.sp)
-        Image(painter = painterResource(id = weatherIcon), contentDescription = null)
+        Image(
+            painter = painterResource(id = weatherIcon),
+            contentDescription = null
+        )
         Text(text = temperature, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }
 
@@ -59,6 +65,6 @@ private fun Prev() {
         time = "00 PM",
         weatherIcon = R.drawable.ic_sun_cloud,
         temperature = "24°",
-        backgroundColor = androidx.compose.ui.graphics.Color.White
+        selected = true
     )
 }

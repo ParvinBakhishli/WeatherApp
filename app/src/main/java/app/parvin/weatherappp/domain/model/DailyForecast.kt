@@ -1,8 +1,7 @@
 package app.parvin.weatherappp.domain.model
 
-import app.parvin.weatherappp.ui.WeatherType
-
 data class DailyForecast(
+    val dayOfWeek: String,
     val date: String,
     val weatherCode: WeatherType,
     val averageTemperature: Pair<Double, Double>

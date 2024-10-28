@@ -18,7 +18,7 @@ fun AppContent(
         startDestination = Home
     ) {
         composable<Home> {
-            HomeScreen(location = "bebe")
+            HomeScreen(location = "Baku")
         }
     }
 }

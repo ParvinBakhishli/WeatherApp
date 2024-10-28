@@ -25,10 +25,11 @@ fun DailyWeatherItem(
     dayOfWeek: String,
     date: String,
     temperature: String,
-    weatherIcon: Int
+    weatherIcon: Int,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = Color.White),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -37,19 +38,20 @@ fun DailyWeatherItem(
         Column {
             Text(
                 text = dayOfWeek,
-                fontSize = 14.sp,
-                color = Color.Black
+                fontSize = 16.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Medium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = date,
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.DarkGray
             )
         }
         Text(
-            text = "$temperature°",
-            fontSize = 20.sp,
+            text = temperature,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )

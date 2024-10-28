@@ -8,6 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
 
@@ -20,8 +22,17 @@ object AppModule {
     }
 
     @Provides
-    fun provideRetrofit() = Retrofit.Builder()
+    fun provideOkhttpClient() = OkHttpClient.Builder()
+        .addInterceptor(
+            HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)
+        )
+        .build()
+
+    @Provides
+    fun provideRetrofit(client: OkHttpClient) = Retrofit.Builder()
         .baseUrl("https://api.open-meteo.com/v1/")
+        .client(client)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 

@@ -11,6 +11,7 @@ interface ApiService {
     suspend fun getWeatherData(
         @Query("latitude") lat: Double,
         @Query("longitude") long: Double,
+        @Query("timezone") timezone: String,
         @Query("forecast_days") days: Int,
         @Query("hourly") hourlyData: List<String>,
         @Query("daily") dailyData: List<String>
