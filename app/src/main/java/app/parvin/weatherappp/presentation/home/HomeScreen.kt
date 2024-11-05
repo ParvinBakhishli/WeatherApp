@@ -1,6 +1,5 @@
 package app.parvin.weatherappp.presentation.home
 
-import androidx.compose.animation.core.EaseOutBounce
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -19,7 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,50 +27,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.parvin.weatherappp.mvi.HomeScreenUiState
+import app.parvin.weatherappp.mvi.WeatherAction
 import app.parvin.weatherappp.presentation.home.components.DailyWeatherItem
 import app.parvin.weatherappp.presentation.home.components.HourlyWeatherItem
-import app.parvin.weatherappp.util.NotificationHelper
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    location: String
+    state: HomeScreenUiState,
+    onAction :(WeatherAction) -> Unit
 ) {
-    val viewModel = hiltViewModel<HomeViewModel>()
-    val context = LocalContext.current
-
-
-    val hourlyDataList by viewModel.todayData.collectAsStateWithLifecycle()
-    val dailyDataList by viewModel.dailyData.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                navigationIcon = {
+                actions = {
                     IconButton(onClick = {
                         //helper.showNotification(Pair(dailyDataList[0].averageTemperature.first.roundToInt(),dailyDataList[0].averageTemperature.second.roundToInt()))
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            imageVector = Icons.Default.Search,
                             contentDescription = null
                         )
                     }
                 },
                 title = {
-                    Text(text = location)
+                    Text(text = state.cityName)
                 }
             )
         }
@@ -86,20 +74,20 @@ fun HomeScreen(
             Text(text = "Today", fontSize = 16.sp, modifier = Modifier.padding(start = 20.dp))
             Spacer(modifier = Modifier.height(20.dp))
 
-            val state = rememberLazyListState()
-            LaunchedEffect(key1 = state, key2 = hourlyDataList) {
-                val itemIndex = hourlyDataList.indexOfFirst {
-                    it?.isNow == true
+            val state1 = rememberLazyListState()
+            LaunchedEffect(key1 = state1, key2 = state.hourlyForecast) {
+                val itemIndex = state.hourlyForecast.indexOfFirst {
+                    it.isNow
                 }
 
                 if (itemIndex != -1) {
-                    val offset = state.layoutInfo.run {
+                    val offset = state1.layoutInfo.run {
                         val totalItemWidth = visibleItemsInfo.first().size * itemIndex
                         val totalItemSpacing = mainAxisItemSpacing * itemIndex
 
                         beforeContentPadding + totalItemWidth + totalItemSpacing
                     }
-                    state.animateScrollBy(
+                    state1.animateScrollBy(
                         offset.toFloat(),
 //                        animationSpec = spring(
 //                            dampingRatio = Spring.DampingRatioMediumBouncy
@@ -115,21 +103,19 @@ fun HomeScreen(
             }
 
             LazyRow(
-                state = state,
+                state = state1,
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(horizontal = 20.dp)
             ) {
-                items(hourlyDataList) {
-                    if (it != null) {
-                        HourlyWeatherItem(
-                            time = if (it.hour == "12 AM") "00 AM" else it.hour,
-                            weatherIcon = if (it.isDay == 1) it.weatherType.iconDay else it.weatherType.iconNight,
-                            temperature = "${it.temperature.roundToInt()}°C",
-                            selected = it.isNow
-                        )
-                    }
+                items(state.hourlyForecast) {
+                    HourlyWeatherItem(
+                        time = if (it.hour == "12 AM") "00 AM" else it.hour,
+                        weatherIcon = if (it.isDay == 1) it.weatherType.iconDay else it.weatherType.iconNight,
+                        temperature = "${it.temperature.roundToInt()}°C",
+                        selected = it.isNow
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -140,18 +126,12 @@ fun HomeScreen(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                itemsIndexed(dailyDataList, key = { _, it -> it.date }) { i, item ->
+                items(state.dailyForecast) {
                     DailyWeatherItem(
-                        dayOfWeek = item.dayOfWeek,
-                        date = item.date,
-                        temperature = "${item.averageTemperature.first.roundToInt()}°C-${item.averageTemperature.second.roundToInt()}°C",
-                        weatherIcon = item.weatherCode.iconDay,
-                        modifier = Modifier.animateItem(
-                            placementSpec = tween(
-                                durationMillis = 300,
-                                delayMillis = i * 100
-                            )
-                        )
+                        dayOfWeek = it.dayOfWeek,
+                        date = it.date,
+                        temperature = "${it.averageTemperature.first.roundToInt()}°C-${it.averageTemperature.second.roundToInt()}°C",
+                        weatherIcon = it.weatherCode.iconDay
                     )
                 }
             }
@@ -159,9 +139,3 @@ fun HomeScreen(
     }
 }
 
-
-@Preview
-@Composable
-private fun Prev() {
-    HomeScreen(location = "Gotham")
-}

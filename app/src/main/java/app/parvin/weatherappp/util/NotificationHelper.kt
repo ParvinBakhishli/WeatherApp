@@ -67,10 +67,10 @@ class NotificationHelper @Inject constructor(
             weatherIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        val d = context.getDrawable(R.drawable.ic_sun_cloud)?.toBitmap()
+        val d = context.getDrawable(interactor.getTomorrowWeatherCode())?.toBitmap()
 
         val notification = NotificationCompat.Builder(context, TOMORROW_WEATHER_CHANNEL_ID)
-            .setSmallIcon(interactor.getTomorrowWeatherCode())
+            .setSmallIcon(R.drawable.ic_cloudy)
             .setContentTitle("Weather forecast for tomorrow")
             .setContentText("${temp.first}°C and ${temp.second}°C")
             .setLargeIcon(d)
