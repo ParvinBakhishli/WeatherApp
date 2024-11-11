@@ -20,6 +20,10 @@ kotlinx-serialization = "1.7.1"
 datetime = "0.6.1"
 hilt = "2.51.1"
 hilt-androidx = "1.2.0"
+googleMap = "6.1.0"
+secretsPlugin = "2.0.1"
+lottie = "6.1.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +57,13 @@ serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization
 kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
+googlePlayService = { module = "com.google.android.gms:play-services-maps", version = "19.0.0"}
+googleMap = { module = "com.google.maps.android:maps-compose", version.ref = "googleMap"}
+googleMap-utils = { module = "com.google.maps.android:android-maps-utils", version = "3.8.2" }
+locationService = "com.google.android.gms:play-services-location:21.3.0"
+
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -61,3 +72,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsPlugin" }
+

@@ -1,5 +1,6 @@
 package app.parvin.weatherappp.mvi
 
+import android.app.Dialog
 import androidx.compose.runtime.Immutable
 import app.parvin.weatherappp.domain.model.DailyForecast
 import app.parvin.weatherappp.domain.model.HourlyForecast
@@ -9,7 +10,8 @@ import app.parvin.weatherappp.domain.model.HourlyForecast
 data class HomeScreenUiState (
     val cityName: String,
     val hourlyForecast: List< HourlyForecast>,
-    val dailyForecast: List<DailyForecast>
+    val dailyForecast: List<DailyForecast>,
+    val showDialog: Boolean
 )
 
 sealed interface WeatherAction {

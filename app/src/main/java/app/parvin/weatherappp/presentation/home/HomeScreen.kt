@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -27,30 +26,60 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import app.parvin.weatherappp.mvi.HomeEffect
 import app.parvin.weatherappp.mvi.HomeScreenUiState
 import app.parvin.weatherappp.mvi.WeatherAction
 import app.parvin.weatherappp.presentation.home.components.DailyWeatherItem
 import app.parvin.weatherappp.presentation.home.components.HourlyWeatherItem
+import app.parvin.weatherappp.presentation.map.MapRoute
+import app.parvin.weatherappp.util.NoInternetDialog
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: HomeScreenUiState,
-    onAction :(WeatherAction) -> Unit
+    onAction: (WeatherAction) -> Unit,
+    navController: NavController
 ) {
+
+    val viewModel = hiltViewModel<HomeViewModel>()
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                HomeEffect.ShowDialog -> {
+                    showDialog = true
+                }
+            }
+        }
+    }
+
+    if (showDialog) {
+        NoInternetDialog {
+            showDialog = false
+            onAction(WeatherAction.ViewCreated)
+        }
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 actions = {
                     IconButton(onClick = {
-                        //helper.showNotification(Pair(dailyDataList[0].averageTemperature.first.roundToInt(),dailyDataList[0].averageTemperature.second.roundToInt()))
+                        navController.navigate(MapRoute)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Search,

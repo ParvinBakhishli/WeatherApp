@@ -8,7 +8,8 @@ object HomeScreenUiStateReducer {
     fun getInitialState() = HomeScreenUiState(
         cityName = "Baku",
         hourlyForecast = emptyList(),
-        dailyForecast = emptyList()
+        dailyForecast = emptyList(),
+        showDialog = false
     )
 
     fun HomeScreenUiState.setCityName(name: String) = copy(
@@ -21,5 +22,9 @@ object HomeScreenUiStateReducer {
 
     fun HomeScreenUiState.setDailyForecast(dailyData: List<DailyForecast>) = copy(
         dailyForecast = dailyData
+    )
+
+    fun HomeScreenUiState.showErrorDialog(show: Boolean) = copy(
+        showDialog = show
     )
 }

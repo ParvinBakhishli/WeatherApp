@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -47,6 +48,11 @@ android {
     }
 }
 
+secrets {
+    propertiesFileName = "secrets.properties"
+    ignoreList.add("sdk.*")
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -76,7 +82,13 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.google.compiler)
 
+    implementation(libs.googleMap)
+    implementation(libs.googlePlayService)
+    implementation(libs.googleMap.utils)
+    implementation(libs.locationService)
+
     implementation(libs.compose.navigation)
 
     implementation(libs.kotlin.datetime)
+    implementation(libs.lottie)
 }
