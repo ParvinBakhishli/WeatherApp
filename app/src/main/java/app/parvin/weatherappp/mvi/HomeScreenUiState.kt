@@ -1,15 +1,14 @@
 package app.parvin.weatherappp.mvi
 
-import android.app.Dialog
 import androidx.compose.runtime.Immutable
 import app.parvin.weatherappp.domain.model.DailyForecast
 import app.parvin.weatherappp.domain.model.HourlyForecast
 
 
 @Immutable
-data class HomeScreenUiState (
+data class HomeScreenUiState(
     val cityName: String,
-    val hourlyForecast: List< HourlyForecast>,
+    val hourlyForecast: List<HourlyForecast>,
     val dailyForecast: List<DailyForecast>,
     val showDialog: Boolean
 )

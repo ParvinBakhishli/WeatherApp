@@ -1,5 +1,6 @@
 package app.parvin.weatherappp.domain.interactor
 
+import app.parvin.weatherappp.domain.model.CityWeather
 import app.parvin.weatherappp.domain.model.DailyForecast
 import app.parvin.weatherappp.domain.model.HourlyForecast
 import app.parvin.weatherappp.domain.repository.WeatherRepository
@@ -28,5 +29,9 @@ class WeatherInteractor @Inject constructor(
             repository.getDailyForecast()[0].averageTemperature.first.roundToInt(),
             repository.getDailyForecast()[0].averageTemperature.second.roundToInt()
         )
+    }
+
+    suspend fun getWeatherForCities(): List<CityWeather> {
+        return repository.getWeatherForCities()
     }
 }
