@@ -1,4 +1,4 @@
-# WeatherApp
+# WeatherApp - in progress
 WeatherApp is a mobile application designed to provide users with real-time weather updates and forecasts. The app features a clean interface for checking weather conditions, a notification system for daily weather alerts, and a map view to visualize temperatures in different cities
 
 ## APIs
