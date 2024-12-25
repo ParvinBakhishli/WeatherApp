@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 fun MarkerBox(
     modifier: Modifier = Modifier,
     outlineWidth: Dp = 0.5.dp,
-    outlineColor: Color = Color.DarkGray,
+    outlineColor: Color = Color.LightGray,
     content: @Composable BoxScope.() -> Unit,
 ) {
     var shape by remember { mutableStateOf(MarkerBoxShape())}

@@ -1,14 +1,14 @@
 package app.parvin.weatherappp.domain.interactor
 
+import app.parvin.weatherappp.domain.model.City
 import app.parvin.weatherappp.domain.model.CityWeather
 import app.parvin.weatherappp.domain.model.DailyForecast
 import app.parvin.weatherappp.domain.model.HourlyForecast
 import app.parvin.weatherappp.domain.repository.WeatherRepository
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.math.roundToInt
 
-@Singleton
+//@ViewModelScoped
 class WeatherInteractor @Inject constructor(
     private val repository: WeatherRepository
 ) {
@@ -32,6 +32,14 @@ class WeatherInteractor @Inject constructor(
     }
 
     suspend fun getWeatherForCities(): List<CityWeather> {
-        return repository.getWeatherForCities()
+        return repository.getWeatherForMarkers()
+    }
+
+    suspend fun getSearchOptions(city: String): List<City> {
+        return repository.showSearchedCities(city)
+    }
+
+    suspend fun getWeatherForCity(city: City): CityWeather {
+        return repository.getWeatherForCity(city)
     }
 }

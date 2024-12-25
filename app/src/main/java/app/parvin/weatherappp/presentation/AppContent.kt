@@ -2,6 +2,7 @@ package app.parvin.weatherappp.presentation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +30,9 @@ fun AppContent(
             val viewModel = hiltViewModel<HomeViewModel>(it)
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-            viewModel.handleAction(WeatherAction.ViewCreated)
+            LaunchedEffect(Unit) {
+                viewModel.handleAction(WeatherAction.ViewCreated)
+            }
 
             HomeScreen(
                 state = state,
@@ -42,9 +45,9 @@ fun AppContent(
             val viewModel = hiltViewModel<MapViewModel>(it)
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-            Log.e("hello", "MapRoute is called before")
-            viewModel.handleAction(MapAction.ViewCreated)
-            Log.e("hello", state.markers.toString())
+            LaunchedEffect(Unit) {
+                viewModel.handleAction(MapAction.ViewCreated)
+            }
 
             if (state.markers.isNotEmpty()) {
                 MapScreen(

@@ -33,7 +33,6 @@ enum class WeatherType(
     SlightSnowShowers(85, R.drawable.ic_snow_moderate, R.drawable.ic_snow_slight_night),
     HeavySnowShowers(86, R.drawable.ic_snow_intense, R.drawable.ic_snow_intense);
 
-
     companion object {
         fun from(id: Int) = entries.find { it.id == id }
     }

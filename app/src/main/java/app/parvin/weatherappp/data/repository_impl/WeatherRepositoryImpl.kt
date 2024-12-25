@@ -10,13 +10,13 @@ import app.parvin.weatherappp.domain.model.HourlyWeatherVariable
 import app.parvin.weatherappp.domain.repository.WeatherRepository
 import app.parvin.weatherappp.network.ApiService
 import app.parvin.weatherappp.domain.model.WeatherType
+import app.parvin.weatherappp.network.LocationService
 import app.parvin.weatherappp.util.zip
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DayOfWeekNames
@@ -30,8 +30,10 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 
-class WeatherRepositoryImpl @Inject constructor(private val apiService: ApiService) :
-    WeatherRepository {
+class WeatherRepositoryImpl @Inject constructor(
+    private val locationService: LocationService,
+    private val apiService: ApiService,
+) : WeatherRepository {
 
     companion object {
         val hourlyResponseTimeFormat = LocalDateTime.Formats.ISO
@@ -160,7 +162,7 @@ class WeatherRepositoryImpl @Inject constructor(private val apiService: ApiServi
         }
     }
 
-    override suspend fun getCities(): List<City> {
+    override suspend fun getCitiesForMarkers(): List<City> {
         return listOf(
             City("Baku", LatLng(40.4093, 49.8671)),
             City("Ganja", LatLng(40.6828, 46.3606)),
@@ -172,12 +174,12 @@ class WeatherRepositoryImpl @Inject constructor(private val apiService: ApiServi
             City("Lankaran", LatLng(38.7529, 48.8517)),
             City("Shamakhi", LatLng(40.6306, 48.6410)),
             City("Barda", LatLng(40.3744, 47.1266)),
-            City("Quba", LatLng(41.3641, 48.5122))
+            City("Quba", LatLng(41.3641, 48.5122)),
+            City("Agdash", LatLng(40.6477, 47.4738))
         )
     }
 
-    override suspend fun getWeatherForCities(): List<CityWeather> {
-        Log.e("cities", "Here is here")
+    override suspend fun getWeatherForMarkers(): List<CityWeather> {
 
         val cityWeather = mutableListOf<CityWeather>()
         val dailyWeatherVariables = listOf(
@@ -185,7 +187,7 @@ class WeatherRepositoryImpl @Inject constructor(private val apiService: ApiServi
             DailyWeatherVariable.WeatherCode.value
         )
 
-        val cities = getCities()
+        val cities = getCitiesForMarkers()
 
         for (city in cities) {
             val response = apiService.getWeatherData(city.location.latitude, city.location.longitude, "Europe/Moscow", 1, listOf(), dailyWeatherVariables)
@@ -205,5 +207,41 @@ class WeatherRepositoryImpl @Inject constructor(private val apiService: ApiServi
         }
 
         return cityWeather.toList()
+    }
+
+    override suspend fun showSearchedCities(city: String): List<City> {
+        val response = locationService.getLocation(city)
+//        Log.e("djjvnj", response.status)
+//        Log.e("djjvnj", response.results.toString())
+
+        if (response.status != "OK") return emptyList()
+
+
+        val cities = mutableListOf<City>()
+
+        for (cityOption in response.results!!) {
+            val cityName = cityOption.address
+            val latitude = cityOption.location.location.lat
+            val longitude = cityOption.location.location.lng
+            cities.add(City(cityName,LatLng(latitude, longitude)))
+        }
+        return cities.toList()
+    }
+
+    override suspend fun getWeatherForCity(city: City): CityWeather {
+        val dailyWeatherVariables = listOf(
+            DailyWeatherVariable.MaxTemperature.value,
+            DailyWeatherVariable.WeatherCode.value
+        )
+
+        val response = apiService.getWeatherData(city.location.latitude, city.location.longitude, "Europe/Moscow", 1, listOf(), dailyWeatherVariables)
+        val temperature = response.daily?.dailyMaxTemperature?.get(0)?.toInt() ?: 0
+
+        val weatherType = response.daily?.dailyWeatherCode?.map {
+            WeatherType.from(it) ?: WeatherType.ClearSky
+        }
+        val weatherCode = weatherType?.get(0)?.iconDay ?: 0
+
+        return CityWeather(city.location, city.name,temperature, weatherCode)
     }
 }
